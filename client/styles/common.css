@@ -1,0 +1,113 @@
+:root {
+    --background: #2a3d4c;
+
+    --window-bar: #11111b;
+    --window-bar-text: #c7d0ee;
+    --window-background: #36373a33;
+    --window-text: #5fc0cc;
+
+    --window-opacity: 0.4;
+
+    --window-border-radius: 2px;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    font-family: Arial, Helvetica, sans-serif;
+    background: var(--background);
+    align-items: center;
+    height: 100vh;
+    padding: 0px;
+    margin: 0px;
+}
+
+.group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.window {
+    display: flex;
+    flex-direction: column;
+    width: 40vw;
+    margin: 0px;
+}
+
+.window-titlebar {
+    display: flex;
+    padding: 4px 8px;
+    background-color: var(--window-bar);
+}
+
+.window-titlebar h2 {
+    display: flex;
+    justify-content: center;
+    color: var(--window-bar-text);
+    font-weight: 400;
+    font-size: 18px;
+    margin: 0px;
+}
+
+.window-content {
+    display: flex;
+    padding: 16px 32px;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0px 4px 16px rgba(0, 0, 0, 0.1);
+    border-radius: var(--window-border-radius);
+    -webkit-backdrop-filter: blur(1.25px);
+    background: var(--window-background);
+    backdrop-filter: blur(1.25px);
+    margin: 0px;
+    gap: 12px;
+}
+
+.window .field {
+    display: flex;
+    flex-direction: column;
+}
+
+.window label {
+    padding-left: 2px;
+    color: var(--window-text);
+}
+
+.window a {
+    display: flex;
+    justify-content: center;
+    text-decoration: none;
+    color: white;
+
+    &:hover {
+        color: #fa8;
+    }
+}
+
+.window input {
+    color: white;
+    padding: 4px 8px;
+    background-color: rgba(0,0,0,0);
+    border: none;
+
+    &:focus {
+        outline: none;
+    }
+}
+
+.button {
+    display: flex;
+    justify-content: center;
+    text-transform: uppercase;
+    background-color: #eee;
+    padding: 4px 8px;
+    color: #333;
+    
+    &:hover {
+        color: #222;
+        background-color: #ddd;
+        transition: background-color 0.2s ease-in-out;
+        cursor: pointer;
+    }
+}

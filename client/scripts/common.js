@@ -7,6 +7,10 @@ window.onload = () => {
     titlebar.addEventListener("mousedown", (event) => {
       moveWindow(event, window[i], titlebar);
     });
+
+    titlebar.addEventListener("touchstart", (event) => {
+      moveWindow(event, window[i], titlebar);
+    });
   }
 };
 
@@ -14,6 +18,15 @@ function moveWindow(event, window, titlebar) {
   titlebar.style.cursor = "grabbing";
   let shiftX = event.clientX - window.getBoundingClientRect().left;
   let shiftY = event.clientY - window.getBoundingClientRect().top;
+
+  if (event.type === "touchstart") {
+    shiftX = event.touches[0].clientX - window.getBoundingClientRect().left;
+    shiftY = event.touches[0].clientY - window.getBoundingClientRect().top;
+
+    window.addEventListener("touchmove", (event) => {
+      moveAt(event.touches[0].clientX, event.touches[0].clientY);
+    });
+  }
 
   function moveAt(pageX, pageY) {
     window.style.position = "absolute";

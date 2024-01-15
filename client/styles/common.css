@@ -88,7 +88,7 @@ body {
 .window input {
     color: white;
     padding: 4px 8px;
-    background-color: rgba(0,0,0,0);
+    background-color: rgba(0,0,0,0.1);
     border: none;
 
     &:focus {
@@ -100,13 +100,10 @@ body {
     display: flex;
     justify-content: center;
     text-transform: uppercase;
-    background-color: #eee;
     padding: 4px 8px;
-    color: #333;
     
     &:hover {
-        color: #222;
-        background-color: #ddd;
+        background-color: rgba(0,0,0,0.25);
         transition: background-color 0.2s ease-in-out;
         cursor: pointer;
     }

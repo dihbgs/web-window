@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles/register.css">
+    <link rel="stylesheet" href="styles/common.css">
+    <link rel="icon" href="assets/register.svg">
+    <script src="scripts/common.js"></script>
+    <title>Register</title>
+</head>
+<body>
+    <div class="group">
+        <form class="window" action="register" method="post">
+            <div class="window-titlebar">
+                <h2>Register</h2>
+            </div>
+            <div class="window-content">
+                <div class="field">
+                    <label for="username">Username (*)</label>
+                    <input id="username" type="username" autocomplete="username">
+                </div>
+    
+                <div class="field">
+                    <label for="email">Email (*)</label>
+                    <input id="email" type="email" autocomplete="email">
+                </div>
+        
+                <div class="field">
+                    <label for="password">Password (*)</label>
+                    <input id="password" type="password" autocomplete="current-password">
+                </div>
+                <input class="button" value="Register" type="submit">
+            </form>
+        </div>
+        <div class="window">
+            <div class="window-titlebar">
+                <h2>Navegation</h2>
+            </div>
+            <div class="window-content">
+                <a href="index.html">Go back</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

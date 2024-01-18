@@ -1,7 +1,8 @@
 {
   "scripts": {
     "start": "node src/server.js",
-    "dev": "nodemon src/server.js"
+    "dev": "nodemon src/server.js",
+    "compile": "tsc client/ts/*.ts --outDir client/scripts/ -w"
   },
   "dependencies": {
     "bcrypt": "^5.1.1",

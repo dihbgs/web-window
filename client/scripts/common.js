@@ -1,66 +1,96 @@
-window.onload = () => {
-  const window = document.querySelectorAll(".window");
-
-  for (let i = 0; i < window.length; i++) {
-    const titlebar = document.querySelectorAll(".window-titlebar")[i];
-
-    titlebar.addEventListener("mousedown", (event) => {
-      moveWindow(event, window[i], titlebar);
+var screenMargin = 25;
+window.onload = function () {
+    var windows = document.querySelectorAll(".window");
+    var titlebars = document.querySelectorAll(".window-titlebar");
+    windows.forEach(function (win, index) {
+        var titlebar = titlebars[index];
+        titlebar === null || titlebar === void 0 ? void 0 : titlebar.addEventListener("mousedown", handleEventStart, {
+            passive: false,
+        });
+        titlebar === null || titlebar === void 0 ? void 0 : titlebar.addEventListener("touchstart", handleEventStart, {
+            passive: false,
+        });
     });
-
-    titlebar.addEventListener("touchstart", (event) => {
-      moveWindow(event, window[i], titlebar);
-    });
-  }
 };
-
-function moveWindow(event, window, titlebar) {
-  titlebar.style.cursor = "grabbing";
-  let shiftX = event.clientX - window.getBoundingClientRect().left;
-  let shiftY = event.clientY - window.getBoundingClientRect().top;
-
-  if (event.type === "touchstart") {
-    shiftX = event.touches[0].clientX - window.getBoundingClientRect().left;
-    shiftY = event.touches[0].clientY - window.getBoundingClientRect().top;
-
-    window.addEventListener("touchmove", (event) => {
-      moveAt(event.touches[0].clientX, event.touches[0].clientY);
+function handleEventStart(event) {
+    var target = (event instanceof MouseEvent ? event.target : event.touches[0].target);
+    var window = target === null || target === void 0 ? void 0 : target.closest(".window");
+    var _a = getWindowCoordinates(window), windowX = _a[0], windowY = _a[1];
+    var _b = getTargetCoordinates(event), targetX = _b[0], targetY = _b[1];
+    var abortMovement = new AbortController();
+    var offsetX = targetX - windowX;
+    var offsetY = targetY - windowY;
+    document.addEventListener("mousemove", function (mouseEvent) {
+        handleEventMove(mouseEvent, window, offsetX, offsetY);
+    }, {
+        passive: false,
+        signal: abortMovement.signal,
     });
-  }
-
-  function moveAt(pageX, pageY) {
-    window.style.position = "absolute";
-    window.style.left = pageX - shiftX + "px";
-    window.style.top = pageY - shiftY + "px";
-  }
-
-  function onMouseMove(event) {
-    moveAt(event.pageX, event.pageY);
-  }
-
-  function zUp() {
-    window.style.zIndex = 1;
-
-    const z = document.querySelectorAll(".window");
-    for (let i = 0; i < z.length; i++) {
-      if (z[i] != window) {
-        z[i].style.zIndex = 0;
-      }
+    document.addEventListener("touchmove", function (touchEvent) {
+        handleEventMove(touchEvent, window, offsetX, offsetY);
+    }, {
+        passive: false,
+        signal: abortMovement.signal,
+    });
+    document.addEventListener("mouseup", function () {
+        checkOutOfBounds(window);
+        abortMovement.abort();
+    }, {
+        passive: false,
+        signal: abortMovement.signal,
+    });
+    document.addEventListener("touchend", function () {
+        checkOutOfBounds(window);
+        abortMovement.abort();
+    }, {
+        passive: false,
+        signal: abortMovement.signal,
+    });
+    event.preventDefault();
+    rearrangeZIndex(target);
+}
+function rearrangeZIndex(target) {
+    var windows = document.querySelectorAll(".window");
+    windows.forEach(function (window) {
+        window.style.zIndex = "0";
+    });
+    target.parentElement.style.zIndex = "100";
+}
+function checkOutOfBounds(window) {
+    var _a = getWindowCoordinates(window), windowX = _a[0], windowY = _a[1];
+    var _b = [screen.width, screen.height], screenW = _b[0], screenH = _b[1];
+    window = window;
+    var isOutOfBounds = windowX + screenMargin < 0 ||
+        windowY + screenMargin < 0 ||
+        windowX + window.clientWidth > screenW + screenMargin ||
+        windowY + window.clientHeight > screenH + screenMargin;
+    if (isOutOfBounds) {
+        window.style.position = "static";
     }
-  }
-
-  document.addEventListener("mousemove", onMouseMove);
-
-  window.onmouseup = function () {
-    document.removeEventListener("mousemove", onMouseMove);
-    titlebar.style.cursor = "grab";
-    window.onmouseup = null;
-  };
-
-  window.ondragstart = function () {
-    return false;
-  };
-
-  moveAt(event.pageX, event.pageY);
-  zUp();
+}
+function handleEventMove(event, window, offsetX, offsetY) {
+    var _a = getTargetCoordinates(event), targetX = _a[0], targetY = _a[1];
+    var left = targetX - offsetX;
+    var top = targetY - offsetY;
+    window.style.position = "absolute";
+    window.style.left = "".concat(left, "px");
+    window.style.top = "".concat(top, "px");
+}
+function getTargetCoordinates(event) {
+    var targetX;
+    var targetY;
+    if (event instanceof MouseEvent) {
+        targetX = event.clientX;
+        targetY = event.clientY;
+    }
+    else {
+        targetX = event.touches[0].clientX;
+        targetY = event.touches[0].clientY;
+    }
+    return [targetX, targetY];
+}
+function getWindowCoordinates(window) {
+    var windowX = window === null || window === void 0 ? void 0 : window.getBoundingClientRect().left;
+    var windowY = window === null || window === void 0 ? void 0 : window.getBoundingClientRect().top;
+    return [windowX, windowY];
 }

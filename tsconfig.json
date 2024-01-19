@@ -1,0 +1,14 @@
+{
+	"compilerOptions": {
+		"lib": ["es6"],
+		"strict": true,
+		"allowJs": true,
+		"target": "es5",
+		"outDir": "build",
+		"module": "commonjs",
+		"rootDir": "src",
+		"esModuleInterop": true,
+		"noImplicitAny": true
+	},
+	"exclude": ["node_modules", "build", "client"]
+}

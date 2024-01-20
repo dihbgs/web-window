@@ -1,14 +1,18 @@
 {
 	"compilerOptions": {
-		"lib": ["es6"],
 		"strict": true,
-		"allowJs": true,
+		"lib": ["es6"],
 		"target": "es5",
-		"outDir": "build",
-		"module": "commonjs",
-		"rootDir": "src",
-		"esModuleInterop": true,
-		"noImplicitAny": true
+		"sourceMap": true,
+		"outDir": "./build",
+		"module": "CommonJS",
+		"noUnusedLocals": true,
+		"noImplicitReturns": true,
+		"noUnusedParameters": true,
+		"noFallthroughCasesInSwitch": true,
+		"forceConsistentCasingInFileNames": true,
 	},
-	"exclude": ["node_modules", "build", "client"]
-}
+	"include": [
+	  "src/test/*"
+	]
+  }

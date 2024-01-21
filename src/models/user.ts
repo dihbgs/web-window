@@ -9,6 +9,6 @@ export interface User {
 
 export interface UserDTO {
   email?: string;
-  username: string;
+  username?: string;
   password?: string;
 }

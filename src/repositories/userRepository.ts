@@ -19,7 +19,7 @@ export class UserRepository implements IUserRepository {
 
     return {
       ...{
-        username: newUser.username,
+        username: newUser.username || user.username,
       },
     };
   }

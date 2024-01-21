@@ -1,5 +1,5 @@
 import { User } from "../../models/user";
 
-export interface UserRepository {
+export interface IUserRepository {
   getAll(): Promise<User[]>;
 }

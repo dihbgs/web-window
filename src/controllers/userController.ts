@@ -1,9 +1,12 @@
-import { UserRepository } from "../interfaces/user/repository";
+import { HttpResponse } from "../interfaces/common/httpResponse";
+import { IUserController } from "../interfaces/user/controller";
+import { IUserRepository } from "../interfaces/user/repository";
+import { User } from "../models/user";
 
-export class UserController {
-  constructor(private readonly userRepository: UserRepository) {}
+export class UserController implements IUserController {
+  constructor(private readonly userRepository: IUserRepository) {}
 
-  async getAll() {
+  async getAll(): Promise<HttpResponse<User[]>> {
     try {
       const users = await this.userRepository.getAll();
 
@@ -12,6 +15,7 @@ export class UserController {
         body: users,
       };
     } catch (error) {
+      console.log(error);
       return {
         statusCode: 500,
         body: { message: "Internal server error" },

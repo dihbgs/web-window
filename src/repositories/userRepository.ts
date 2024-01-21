@@ -1,16 +1,19 @@
+import { IUserRepository } from "../interfaces/user/repository";
+import { MongoDBClient } from "../database/mongodb";
 import { User } from "../models/user";
 
-export class UserRepository implements UserRepository {
+export class UserRepository implements IUserRepository {
   async getAll(): Promise<User[]> {
-    return [
-      {
-        id: 1,
-        email: "test@user.com",
-        username: "John Doe",
-        password: "somePass",
-        createdAt: new Date(),
-        updatedAt: new Date(),
-      },
-    ];
+    const users = await MongoDBClient.db
+      .collection<Omit<User, "id">>("users")
+      .find({})
+      .toArray();
+
+    console.log(users);
+
+    return users.map(({ _id, ...rest }) => ({
+      ...rest,
+      id: _id.toHexString(),
+    }));
   }
 }

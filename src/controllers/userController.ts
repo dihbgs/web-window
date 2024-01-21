@@ -58,4 +58,24 @@ export class UserController implements IUserController {
       return badRequest("Internal server error");
     }
   }
+
+  async updateOne(
+    id: string,
+    newUser: HttpRequest<UserDTO>
+  ): Promise<HttpResponse<UserDTO>> {
+    try {
+      if (!newUser.body || Object.keys(newUser.body).length === 0) {
+        return badRequest("Body cannot be empty");
+      }
+
+      const body = newUser.body as User;
+      body.updatedAt = new Date();
+
+      const user = await this.userRepository.updateOne(id, body);
+
+      return ok<UserDTO>(user);
+    } catch (error) {
+      return badRequest("Internal server error");
+    }
+  }
 }

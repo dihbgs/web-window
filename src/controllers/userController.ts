@@ -21,7 +21,7 @@ export class UserController implements IUserController {
     }
   }
 
-  async create(
+  async createOne(
     httpRequest: HttpRequest<UserDTO>
   ): Promise<HttpResponse<UserDTO>> {
     try {
@@ -33,9 +33,27 @@ export class UserController implements IUserController {
       body.createdAt = new Date();
       body.updatedAt = new Date();
 
-      const user = await this.userRepository.create(body);
+      const user = await this.userRepository.createOne(body);
 
       return created<UserDTO>(user);
+    } catch (error) {
+      return badRequest("Internal server error");
+    }
+  }
+
+  async deleteOne(id: string): Promise<HttpResponse<UserDTO>> {
+    try {
+      const user = await this.userRepository.deleteOne(id);
+      return ok<UserDTO>(user);
+    } catch (error) {
+      return badRequest("Internal server error");
+    }
+  }
+
+  async deleteAll(): Promise<HttpResponse<UserDTO[]>> {
+    try {
+      const users = await this.userRepository.deleteAll();
+      return ok<UserDTO[]>(users);
     } catch (error) {
       return badRequest("Internal server error");
     }

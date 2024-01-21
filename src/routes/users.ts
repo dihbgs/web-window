@@ -13,7 +13,21 @@ router.get("/users", async (req, res) => {
 });
 
 router.post("/users", async (req, res) => {
-  const { body, statusCode } = await userController.create({ body: req.body });
+  const { body, statusCode } = await userController.createOne({
+    body: req.body,
+  });
+
+  res.status(statusCode).send(body);
+});
+
+router.delete("/users/:id", async (req, res) => {
+  const { body, statusCode } = await userController.deleteOne(req.params.id);
+
+  res.status(statusCode).send(body);
+});
+
+router.delete("/users", async (req, res) => {
+  const { body, statusCode } = await userController.deleteAll();
 
   res.status(statusCode).send(body);
 });

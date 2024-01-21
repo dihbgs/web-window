@@ -4,6 +4,26 @@ import { User, UserDTO } from "../models/user";
 import { ObjectId } from "mongodb";
 
 export class UserRepository implements IUserRepository {
+  async updateOne(id: string, newUser: UserDTO): Promise<UserDTO> {
+    const user = await MongoDBClient.db
+      .collection<UserDB>("users")
+      .findOne({ _id: new ObjectId(id) });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    await MongoDBClient.db
+      .collection<UserDB>("users")
+      .updateOne({ _id: new ObjectId(id) }, { $set: newUser });
+
+    return {
+      ...{
+        username: newUser.username,
+      },
+    };
+  }
+
   async deleteAll(): Promise<UserDTO[]> {
     const users = await MongoDBClient.db
       .collection<UserDB>("users")

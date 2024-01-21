@@ -32,4 +32,13 @@ router.delete("/users", async (req, res) => {
   res.status(statusCode).send(body);
 });
 
+router.put("/users/:id", async (req, res) => {
+  const { body, statusCode } = await userController.updateOne(
+    req.params.id,
+    req.body
+  );
+
+  res.status(statusCode).send(body);
+});
+
 export default router;

@@ -1,7 +1,7 @@
 {
 	"extends": "../tsconfig.json",
 	"compilerOptions": {
-		"outDir": "build",
+		"outDir": "../build/public/scripts",
 		"rootDir": "ts",
 	},
 	"include": ["ts"]

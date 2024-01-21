@@ -33,10 +33,9 @@ router.delete("/users", async (req, res) => {
 });
 
 router.put("/users/:id", async (req, res) => {
-  const { body, statusCode } = await userController.updateOne(
-    req.params.id,
-    req.body
-  );
+  const { body, statusCode } = await userController.updateOne(req.params.id, {
+    body: req.body,
+  });
 
   res.status(statusCode).send(body);
 });

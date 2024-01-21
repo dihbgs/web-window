@@ -1,7 +1,11 @@
 {
   "scripts": {
-    "start": "node src/server.js",
-    "build": "tsc -p . && tsc -p client",
+    "start": "node build/src/server.js",
+    "clean": "rm -rf build",
+    "compile": "tsc -p . && tsc -p client",
+    "build": "npm run clean && npm run compile && npm run build:copy",
+    "build:copy": "cp -r client/* build/public && npm run build:clean",
+    "build:clean": "rm build/public/tsconfig.json && rm -r build/public/ts",
     "test": "mocha",
     "dev": "nodemon"
   },

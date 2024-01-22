@@ -1,4 +1,4 @@
-export const [OK, BAD_REQUEST, SERVER_ERROR, CREATED] = [200, 400, 500, 201];
+const [OK, BAD_REQUEST, SERVER_ERROR, CREATED] = [200, 400, 500, 201];
 
 export interface HttpResponse<T> {
   statusCode: number;
@@ -30,3 +30,10 @@ export const created = <T>(body: T): HttpResponse<T> => ({
   statusCode: CREATED,
   body,
 });
+
+export const STATUS = {
+  SERVER_ERROR,
+  BAD_REQUEST,
+  CREATED,
+  OK,
+};

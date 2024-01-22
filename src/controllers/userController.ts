@@ -12,10 +12,10 @@ import { User, UserDTO } from "../models/user";
 export class UserController implements IUserController {
   constructor(private readonly userRepository: IUserRepository) {}
 
-  async getAll(): Promise<HttpResponse<User[]>> {
+  async getAll(): Promise<HttpResponse<UserDTO[]>> {
     try {
       const users = await this.userRepository.getAll();
-      return ok<User[]>(users);
+      return ok<UserDTO[]>(users);
     } catch (error) {
       return badRequest("Internal server error");
     }

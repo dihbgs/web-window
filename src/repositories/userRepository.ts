@@ -4,6 +4,10 @@ import { User, UserDTO } from "../models/user";
 import { ObjectId } from "mongodb";
 
 export class UserRepository implements IUserRepository {
+  getId(username: string): Promise<UserDTO> {
+    throw new Error(username);
+  }
+
   async updateOne(id: string, newUser: UserDTO): Promise<UserDTO> {
     const user = await MongoDBClient.db
       .collection<UserDB>("users")

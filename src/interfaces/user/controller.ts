@@ -6,9 +6,11 @@ export type UserResponse = HttpResponse<UserDTO>;
 export type UserRequest = HttpRequest<UserDTO>;
 
 export interface IUserController {
-  updateOne(id: string, user: UserRequest): Promise<UserResponse>;
-  createOne(user: UserRequest): Promise<UserResponse>;
-  deleteOne(id: string): Promise<UserResponse>;
+  updateOne(request: UserRequest): Promise<UserResponse>;
+  createOne(request: UserRequest): Promise<UserResponse>;
+  getByName(request: UserRequest): Promise<UserResponse>;
+  deleteOne(request: UserRequest): Promise<UserResponse>;
+  getById(request: UserRequest): Promise<UserResponse>;
   deleteAll(): Promise<UserArrayResponse>;
   getAll(): Promise<UserArrayResponse>;
 }

@@ -18,3 +18,5 @@ export const MongoDBClient = {
     console.log("Connected to MongoDB!");
   },
 };
+
+export const usersCollection = MongoDBClient.db.collection("users");

@@ -5,10 +5,11 @@ export type ResponseDTO = Promise<UserDTO>;
 export type UserDB = Omit<User, "id">;
 
 export interface IUserRepository {
-  updateOne(id: string, user: UserDTO): ResponseDTO;
+  updateOne(user: UserDTO): ResponseDTO;
   createOne(user: UserDTO): ResponseDTO;
-  getId(username: string): ResponseDTO;
-  deleteOne(id: string): ResponseDTO;
+  getByName(user: UserDTO): ResponseDTO;
+  deleteOne(user: UserDTO): ResponseDTO;
+  getById(user: UserDTO): ResponseDTO;
   deleteAll(): ResponseDTOArray;
   getAll(): ResponseDTOArray;
 }

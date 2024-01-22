@@ -1,101 +1,85 @@
-import { IUserRepository, UserDB } from "../interfaces/user/repository";
-import { MongoDBClient } from "../database/mongodb";
-import { User, UserDTO } from "../models/user";
-import { ObjectId } from "mongodb";
+import { IUserRepository, ResponseDTO } from "../interfaces/user/repository";
+import { MongoDBClient, usersCollection } from "../database/mongodb";
+import { UserDTO } from "../models/user";
 
 export class UserRepository implements IUserRepository {
-  getId(username: string): Promise<UserDTO> {
-    throw new Error(username);
-  }
+  async getByName(user: UserDTO): ResponseDTO {
+    const searchUser = await usersCollection.findOne(user);
 
-  async updateOne(id: string, newUser: UserDTO): Promise<UserDTO> {
-    const user = await MongoDBClient.db
-      .collection<UserDB>("users")
-      .findOne({ _id: new ObjectId(id) });
-
-    if (!user) {
+    if (!searchUser) {
       throw new Error("User not found");
     }
 
-    await MongoDBClient.db
-      .collection<UserDB>("users")
-      .updateOne({ _id: new ObjectId(id) }, { $set: newUser });
-
-    return {
-      ...{
-        username: newUser.username || user.username,
-      },
-    };
+    return searchUser as UserDTO;
   }
 
-  async deleteAll(): Promise<UserDTO[]> {
-    const users = await MongoDBClient.db
-      .collection<UserDB>("users")
-      .find({})
-      .toArray();
+  async getById(user: UserDTO): ResponseDTO {
+    const searchUser = await usersCollection.findOne(user);
 
-    await MongoDBClient.db.collection("users").deleteMany({});
+    if (!searchUser) {
+      throw new Error("User not found");
+    }
 
-    return users.map(({ username }) => {
+    return searchUser as UserDTO;
+  }
+
+  async getAll(): Promise<UserDTO[]> {
+    const searchUsers = await usersCollection.find({}).toArray();
+    const usersDTO = searchUsers.map(({ _id, username }) => {
       return {
+        _id,
         username,
       };
     });
+
+    return usersDTO as UserDTO[];
   }
 
-  async getAll(): Promise<User[]> {
-    const users = await MongoDBClient.db
-      .collection<UserDB>("users")
-      .find({})
-      .toArray();
+  async updateOne(user: UserDTO): ResponseDTO {
+    const searchUser = await usersCollection.findOne(user);
 
-    return users.map(({ _id, ...rest }) => ({
-      ...rest,
-      id: _id.toHexString(),
-    }));
-  }
-
-  async createOne(newUser: User): Promise<UserDTO> {
-    const { insertedId } = await MongoDBClient.db
-      .collection("users")
-      .insertOne(newUser);
-
-    const user = await MongoDBClient.db
-      .collection<UserDB>("users")
-      .findOne({ _id: insertedId });
-
-    if (!user) {
-      throw new Error("User not inserted");
-    }
-
-    return {
-      ...{
-        username: user.username,
-      },
-    };
-  }
-
-  async deleteOne(id: string): Promise<UserDTO> {
-    const user = await MongoDBClient.db
-      .collection<UserDB>("users")
-      .findOne({ _id: new ObjectId(id) });
-
-    if (!user) {
+    if (!searchUser) {
       throw new Error("User not found");
     }
 
-    const { deletedCount } = await MongoDBClient.db
-      .collection("users")
-      .deleteOne({ _id: user._id });
+    await usersCollection.updateOne(searchUser, { $set: user });
 
-    if (!deletedCount) {
-      throw new Error("User not deleted");
+    return searchUser as UserDTO;
+  }
+
+  async deleteAll(): Promise<UserDTO[]> {
+    const searchUsers = await usersCollection.find({}).toArray();
+    const usersDTO = searchUsers.map(({ _id, username }) => {
+      return { _id, username };
+    });
+
+    await MongoDBClient.db.collection("users").deleteMany({});
+
+    return usersDTO as UserDTO[];
+  }
+
+  async createOne(user: UserDTO): ResponseDTO {
+    const searchUser = (await usersCollection.insertOne(user)) as UserDTO;
+
+    if (!searchUser) {
+      throw new Error("User not created");
     }
 
-    return {
-      ...{
-        username: user.username,
-      },
-    };
+    searchUser.email = undefined;
+    searchUser.password = undefined;
+
+    return searchUser as UserDTO;
+  }
+
+  async deleteOne(user: UserDTO): ResponseDTO {
+    const searchUser = await usersCollection.findOne(user);
+
+    if (!searchUser) {
+      throw new Error("User not found");
+    }
+
+    await usersCollection.deleteOne(user);
+
+    return searchUser as UserDTO;
   }
 }

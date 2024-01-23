@@ -1,3 +1,5 @@
+import { ObjectId } from "mongodb";
+
 export interface User {
   id: string;
   email: string;
@@ -9,6 +11,7 @@ export interface User {
 
 export interface UserDTO {
   id?: string;
+  _id?: ObjectId;
   email?: string;
   username?: string;
   password?: string;

@@ -1,30 +1,31 @@
 import { MongoDBClient } from "./database/mongodb";
+import { UserDB } from "./interfaces/user/repository";
 import userRoute from "./routes/users";
 import { config } from "dotenv";
 import express from "express";
 
-const app = express();
+async function startServer() {
+  const app = express();
 
-config();
-const port = process.env.PORT || 8000;
+  config();
+  const port = process.env.PORT || 8000;
 
-const client = async () => {
   await MongoDBClient.connect();
-};
 
-app.use(express.json());
-app.use(express.static("build/public"));
+  app.use(express.json());
+  app.use(express.static("build/public"));
 
-app.use(userRoute);
+  app.use(userRoute);
 
-app.get("/", (req, res) => {
-  res.sendFile("index.html", { root: "./build/public" });
-});
+  app.get("/", (req, res) => {
+    res.sendFile("index.html", { root: "./build/public" });
+  });
 
-app.listen(port, () => {
-  console.log(`Server listening on port ${port}!`);
-});
+  app.listen(port, () => {
+    console.log(`Server listening on port ${port}!`);
+  });
+}
 
-client();
+startServer();
 
-export default app;
+export const usersCollection = MongoDBClient.db.collection<UserDB>("users");

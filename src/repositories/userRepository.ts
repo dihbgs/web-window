@@ -1,19 +1,14 @@
-import { IUserRepository, ResponseDTO } from "../interfaces/user/repository";
-import { MongoDBClient, usersCollection } from "../database/mongodb";
+import {
+  IUserRepository,
+  ResponseDTO,
+  UserDB,
+  UserUpdate,
+} from "../interfaces/user/repository";
 import { UserDTO } from "../models/user";
+import { usersCollection } from "../server";
 
 export class UserRepository implements IUserRepository {
-  async getByName(user: UserDTO): ResponseDTO {
-    const searchUser = await usersCollection.findOne(user);
-
-    if (!searchUser) {
-      throw new Error("User not found");
-    }
-
-    return searchUser as UserDTO;
-  }
-
-  async getById(user: UserDTO): ResponseDTO {
+  async getOne(user: UserDTO): ResponseDTO {
     const searchUser = await usersCollection.findOne(user);
 
     if (!searchUser) {
@@ -25,6 +20,7 @@ export class UserRepository implements IUserRepository {
 
   async getAll(): Promise<UserDTO[]> {
     const searchUsers = await usersCollection.find({}).toArray();
+
     const usersDTO = searchUsers.map(({ _id, username }) => {
       return {
         _id,
@@ -35,16 +31,37 @@ export class UserRepository implements IUserRepository {
     return usersDTO as UserDTO[];
   }
 
-  async updateOne(user: UserDTO): ResponseDTO {
-    const searchUser = await usersCollection.findOne(user);
+  async updateOne(user: UserUpdate): ResponseDTO {
+    const searchUser = await usersCollection.findOne({
+      username: user.oldUsername,
+    });
 
     if (!searchUser) {
       throw new Error("User not found");
     }
 
-    await usersCollection.updateOne(searchUser, { $set: user });
+    const newUser = {
+      username: user.username,
+      password: user.password,
+      email: user.email,
+    } as UserDB;
 
-    return searchUser as UserDTO;
+    newUser.updatedAt = new Date();
+
+    const { modifiedCount } = await usersCollection.updateOne(
+      { username: user.oldUsername },
+      { $set: newUser }
+    );
+
+    if (modifiedCount === 0) {
+      throw new Error("User not updated");
+    }
+
+    const updatedUser = (await usersCollection.findOne({
+      username: user.username,
+    })) as UserDTO;
+
+    return updatedUser as UserDTO;
   }
 
   async deleteAll(): Promise<UserDTO[]> {
@@ -53,13 +70,17 @@ export class UserRepository implements IUserRepository {
       return { _id, username };
     });
 
-    await MongoDBClient.db.collection("users").deleteMany({});
+    await usersCollection.deleteMany({});
 
     return usersDTO as UserDTO[];
   }
 
   async createOne(user: UserDTO): ResponseDTO {
-    const searchUser = (await usersCollection.insertOne(user)) as UserDTO;
+    const { insertedId } = await usersCollection.insertOne(user as UserDB);
+
+    const searchUser = (await usersCollection.findOne({
+      _id: insertedId,
+    })) as UserDTO;
 
     if (!searchUser) {
       throw new Error("User not created");
@@ -67,6 +88,7 @@ export class UserRepository implements IUserRepository {
 
     searchUser.email = undefined;
     searchUser.password = undefined;
+    searchUser.id = insertedId.toHexString();
 
     return searchUser as UserDTO;
   }
@@ -78,7 +100,11 @@ export class UserRepository implements IUserRepository {
       throw new Error("User not found");
     }
 
-    await usersCollection.deleteOne(user);
+    const result = await usersCollection.deleteOne(searchUser);
+
+    if (result.deletedCount === 0) {
+      throw new Error("User not deleted");
+    }
 
     return searchUser as UserDTO;
   }

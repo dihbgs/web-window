@@ -16,9 +16,9 @@ const user = {
 
 const newUser = {
   id: user.id,
-  email: "user@new.name",
+  email: "user@test.new",
   username: "noMoreATestUser",
-  password: "justKidding",
+  password: "password",
 };
 
 describe("Clear database", () => {
@@ -65,11 +65,7 @@ describe("Insert duplicated user", () => {
     chai
       .request(server)
       .post("/users")
-      .send({
-        email: "new@user.com",
-        username: "testUser",
-        password: "654wd",
-      })
+      .send(user)
       .end((err, res) => {
         expect(res).to.have.status(400);
         done();
@@ -81,12 +77,11 @@ describe("Get a user by username", () => {
   it("should be able to return a user by username", (done) => {
     chai
       .request(server)
-      .get(`/users/${user.username}`)
+      .get(`/users/username/${user.username}`)
       .end((err, res) => {
         expect(res).to.have.status(STATUS.OK);
-        expect(res.body).to.be.an("object");
-        expect(res.body.username).to.be.equal("testUser");
-        expect(res.body.id).to.not.be.undefined;
+        expect(res.body.username).to.be.equal(user.username);
+        expect(res.body.id).to.be.not.undefined;
         user.id = res.body.id;
         done();
       });
@@ -97,12 +92,12 @@ describe("Update a user", () => {
   it("should be able to update a user", (done) => {
     chai
       .request(server)
-      .put(`/users/${user.username}`)
+      .put(`/users/username/${user.username}`)
       .send(newUser)
       .end((err, res) => {
         expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.be.an("object");
-        expect(res.body.username).to.be.equal("noMoreATestUser");
+        expect(res.body.username).to.be.equal(newUser.username);
         done();
       });
   });
@@ -112,11 +107,11 @@ describe("Get a user by id", () => {
   it("should be able to return a user by id", (done) => {
     chai
       .request(server)
-      .get(`/users/${user.id}`)
+      .get(`/users/id/${user.id}`)
       .end((err, res) => {
         expect(res).to.have.status(STATUS.OK);
         expect(res.body).to.be.an("object");
-        expect(res.body.username).to.be.equal("noMoreATestUser");
+        expect(res.body.username).to.be.equal(newUser.username);
         done();
       });
   });
@@ -126,7 +121,7 @@ describe("Delete a user", () => {
   it("should be able to delete a user", (done) => {
     chai
       .request(server)
-      .delete(`/users/${user.id}`)
+      .delete(`/users/id/${user.id}`)
       .end((err, res) => {
         expect(res).to.have.status(STATUS.OK);
         done();

@@ -20,8 +20,18 @@ router.post("/users", async (req, res) => {
   res.status(statusCode).send(body);
 });
 
-router.delete("/users/:id", async (req, res) => {
-  const { body, statusCode } = await userController.deleteOne(req.params.id);
+router.delete("/users/id/:id", async (req, res) => {
+  const { body, statusCode } = await userController.deleteOne({
+    body: { id: req.params.id },
+  });
+
+  res.status(statusCode).send(body);
+});
+
+router.delete("/users/username/:username", async (req, res) => {
+  const { body, statusCode } = await userController.deleteOne({
+    body: { username: req.params.username },
+  });
 
   res.status(statusCode).send(body);
 });
@@ -32,8 +42,40 @@ router.delete("/users", async (req, res) => {
   res.status(statusCode).send(body);
 });
 
-router.put("/users/:id", async (req, res) => {
-  const { body, statusCode } = await userController.updateOne(req.params.id, {
+router.put("/users/username/:username", async (req, res) => {
+  const { body, statusCode } = await userController.updateOne({
+    body: { oldUsername: req.params.username, ...req.body },
+  });
+
+  res.status(statusCode).send(body);
+});
+
+router.get("/users", async (req, res) => {
+  const { body, statusCode } = await userController.getOne({
+    body: req.body,
+  });
+
+  res.status(statusCode).send(body);
+});
+
+router.get("/users/username/:username", async (req, res) => {
+  const { body, statusCode } = await userController.getOne({
+    body: { username: req.params.username },
+  });
+
+  res.status(statusCode).send(body);
+});
+
+router.get("/users/id/:id", async (req, res) => {
+  const { body, statusCode } = await userController.getOne({
+    body: { id: req.params.id },
+  });
+
+  res.status(statusCode).send(body);
+});
+
+router.get("/users", async (req, res) => {
+  const { body, statusCode } = await userController.getOne({
     body: req.body,
   });
 

@@ -1,18 +1,23 @@
+import { ObjectId } from "mongodb";
+import { badRequest, created, ok } from "../interfaces/common/http";
 import {
-  HttpRequest,
-  HttpResponse,
-  badRequest,
-  created,
-  ok,
-} from "../interfaces/common/http";
-import { IUserController } from "../interfaces/user/controller";
+  IUserController,
+  UserArrayResponse,
+  UserRequest,
+  UserResponse,
+  UserUpdateRequest,
+} from "../interfaces/user/controller";
 import { IUserRepository } from "../interfaces/user/repository";
 import { User, UserDTO } from "../models/user";
 
 export class UserController implements IUserController {
-  constructor(private readonly userRepository: IUserRepository) {}
+  userRepository: IUserRepository;
 
-  async getAll(): Promise<HttpResponse<UserDTO[]>> {
+  constructor(userRepository: IUserRepository) {
+    this.userRepository = userRepository;
+  }
+
+  async getAll(): Promise<UserArrayResponse> {
     try {
       const users = await this.userRepository.getAll();
       return ok<UserDTO[]>(users);
@@ -21,17 +26,38 @@ export class UserController implements IUserController {
     }
   }
 
-  async createOne(
-    httpRequest: HttpRequest<UserDTO>
-  ): Promise<HttpResponse<UserDTO>> {
+  async createOne(userRequest: UserRequest): Promise<UserResponse> {
     try {
-      if (!httpRequest.body) {
+      if (isBodyEmpty(userRequest)) {
         return badRequest("Missing body");
       }
 
-      const body = httpRequest.body as User;
+      const missingParam = hasRequiredParams(
+        userRequest,
+        "email",
+        "username",
+        "password"
+      );
+      if (missingParam) {
+        return badRequest(`Missing param: ${missingParam}`);
+      }
+
+      const body = userRequest.body as User;
       body.createdAt = new Date();
       body.updatedAt = new Date();
+
+      let doUserExist = true;
+      try {
+        await this.userRepository.getOne({
+          username: body.username,
+        } as UserDTO);
+      } catch (error) {
+        doUserExist = false;
+      }
+
+      if (doUserExist) {
+        return badRequest("User already exist");
+      }
 
       const user = await this.userRepository.createOne(body);
 
@@ -41,16 +67,30 @@ export class UserController implements IUserController {
     }
   }
 
-  async deleteOne(id: string): Promise<HttpResponse<UserDTO>> {
+  async deleteOne(userRequest: UserRequest): Promise<UserResponse> {
     try {
-      const user = await this.userRepository.deleteOne(id);
+      if (isBodyEmpty(userRequest)) {
+        return badRequest("Missing body");
+      }
+
+      let body: UserDTO = {};
+      if (!hasRequiredParams(userRequest, "id")) {
+        body = { _id: new ObjectId(userRequest.body?.id) };
+      }
+
+      if (!hasRequiredParams(userRequest, "username")) {
+        body = { username: userRequest.body?.username };
+      }
+
+      const user = await this.userRepository.deleteOne(body);
+
       return ok<UserDTO>(user);
     } catch (error) {
       return badRequest("Internal server error");
     }
   }
 
-  async deleteAll(): Promise<HttpResponse<UserDTO[]>> {
+  async deleteAll(): Promise<UserArrayResponse> {
     try {
       const users = await this.userRepository.deleteAll();
       return ok<UserDTO[]>(users);
@@ -59,23 +99,88 @@ export class UserController implements IUserController {
     }
   }
 
-  async updateOne(
-    id: string,
-    newUser: HttpRequest<UserDTO>
-  ): Promise<HttpResponse<UserDTO>> {
+  async updateOne(userRequest: UserUpdateRequest): Promise<UserResponse> {
     try {
-      if (!newUser.body || Object.keys(newUser.body).length === 0) {
+      if (isBodyEmpty(userRequest)) {
         return badRequest("Body cannot be empty");
       }
+      const username = userRequest.body?.oldUsername;
 
-      const body = newUser.body as User;
-      body.updatedAt = new Date();
+      if (!username) {
+        return badRequest("Missing username to update user");
+      }
 
-      const user = await this.userRepository.updateOne(id, body);
+      let body: UserDTO = {};
+      if (!hasRequiredParams(userRequest, "username")) {
+        body = { username: userRequest.body?.username };
+      }
+
+      if (!hasRequiredParams(userRequest, "password")) {
+        body = { password: userRequest.body?.password, ...body };
+      }
+
+      if (!hasRequiredParams(userRequest, "email")) {
+        body = { email: userRequest.body?.email, ...body };
+      }
+
+      if (Object.keys(body).length === 0) {
+        return badRequest("Missing params to update user");
+      }
+
+      const user = await this.userRepository.updateOne({
+        oldUsername: username,
+        ...body,
+      });
 
       return ok<UserDTO>(user);
     } catch (error) {
       return badRequest("Internal server error");
     }
   }
+
+  async getOne(userRequest: UserRequest): Promise<UserResponse> {
+    try {
+      if (isBodyEmpty(userRequest)) {
+        return badRequest("Missing body");
+      }
+
+      let body: UserDTO = {};
+      if (!hasRequiredParams(userRequest, "id")) {
+        body = { _id: new ObjectId(userRequest.body?.id) };
+      }
+
+      if (!hasRequiredParams(userRequest, "username")) {
+        body = { username: userRequest.body?.username };
+      }
+
+      const user = await this.userRepository.getOne(body);
+
+      return ok<UserDTO>({
+        id: user._id?.toHexString(),
+        username: user.username,
+      } as UserDTO);
+    } catch (error) {
+      return badRequest("Internal server error");
+    }
+  }
+}
+
+function isBodyEmpty(userRequest: UserRequest): boolean {
+  return !userRequest.body || Object.keys(userRequest.body).length === 0;
+}
+
+function hasRequiredParams(
+  userRequest: UserRequest,
+  ...params: string[]
+): string {
+  const body = userRequest.body as User;
+  const bodyKeys = Object.keys(body);
+
+  for (const param of params) {
+    if (bodyKeys.indexOf(param) === -1) {
+      return param;
+    }
+  }
+
+  return "";
 }

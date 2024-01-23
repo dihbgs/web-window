@@ -17,5 +17,10 @@
         "@typescript-eslint"
     ],
     "rules": {
-    }
+    },
+    "ignorePatterns": [
+        "node_modules/",
+        "build/",
+        "test"
+    ]
 }

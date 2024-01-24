@@ -3,6 +3,7 @@ import { UserDB } from "./interfaces/user/repository";
 import userRoute from "./routes/users";
 import { config } from "dotenv";
 import express from "express";
+import cors from "cors";
 
 async function startServer() {
   const app = express();
@@ -12,8 +13,10 @@ async function startServer() {
 
   await MongoDBClient.connect();
 
+  app.use(cors());
   app.use(express.json());
   app.use(express.static("build/public"));
+  app.use(express.urlencoded({ extended: true }));
 
   app.use(userRoute);
 

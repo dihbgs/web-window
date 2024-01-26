@@ -1,8 +1,8 @@
 {
   "scripts": {
-    "start": "node build/src/server.js",
+    "start": "node build/server.js",
     "clean": "rm -rf build",
-    "compile": "tsc -p . && tsc -p client",
+    "compile": "npx tsc -p . && npx tsc -p client",
     "build": "npm run clean && npm run compile && npm run build:copy",
     "build:copy": "cp -r client/* build/public && npm run build:clean",
     "build:clean": "rm build/public/tsconfig.json && rm -r build/public/ts",
@@ -10,7 +10,6 @@
     "dev": "nodemon"
   },
   "dependencies": {
-    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "express": "^4.18.2",
     "mongodb": "^6.3.0"

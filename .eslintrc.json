@@ -21,6 +21,8 @@
     "ignorePatterns": [
         "node_modules/",
         "build/",
-        "test"
+        "test",
+        "client"
     ]
 }
+

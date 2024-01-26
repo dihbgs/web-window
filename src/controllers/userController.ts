@@ -43,10 +43,9 @@ export class UserController implements IUserController {
       }
 
       const body = userRequest.body as User;
-      body.createdAt = new Date();
-      body.updatedAt = new Date();
-
       let doUserExist = true;
+      console.log(body);
+
       try {
         await this.userRepository.getOne({
           username: body.username,
@@ -58,6 +57,9 @@ export class UserController implements IUserController {
       if (doUserExist) {
         return badRequest("User already exist");
       }
+
+      body.createdAt = new Date();
+      body.updatedAt = new Date();
 
       const user = await this.userRepository.createOne(body);
 

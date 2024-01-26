@@ -1,5 +1,5 @@
-import { UserController } from "../controllers/userController";
 import { UserRepository } from "../repositories/userRepository";
+import { UserController } from "../controllers/userController";
 import express from "express";
 
 const router = express.Router();
@@ -13,6 +13,7 @@ router.get("/users", async (req, res) => {
 });
 
 router.post("/users", async (req, res) => {
+  console.log(req.body);
   const { body, statusCode } = await userController.createOne({
     body: req.body,
   });

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="./styles/common.css">
+	<link rel="stylesheet" href="./styles/users.css">
+	<script src="./scripts/common.js"></script>
+	<link rel="icon" href="./assets/user.svg">
+	<script src="./scripts/users.js"></script>
+	<script src="./3rd/htmx.min.js"></script>
+	<title>User list</title>
+</head>
+
+<body>
+	<div class="group">
+		<div class="window">
+			<div class="window-titlebar">
+				<h2>Manage user</h2>
+			</div>
+			<div class="window-content">
+				<div class="field">
+					<div class="display">
+						<p>Username</p>
+					</div>
+					<div class="edit">
+						<label for="username">Username</label>
+						<input type="text" name="username" id="username" placeholder="Username">
+						<button>
+							<img src="./assets/done.svg">
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="window">
+			<div class="window-titlebar">
+				<h2>Users</h2>
+			</div>
+			<div class="window-content" id="users">
+			</div>
+		</div>
+		<div class="window">
+			<div class="window-titlebar">
+				<h2>Navegation</h2>
+			</div>
+			<div class="window-content">
+				<a href="index.html">Go back</a>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

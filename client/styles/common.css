@@ -7,9 +7,9 @@
 
     --input-text: #c8d5f4;
 
-    --window-bar: #11111bbb;
+    --window-bar: #11111b66;
     --window-bar-text: #c7d0ee;
-    --window-bar-hover: #11111b;
+    --window-bar-hover: #11111b99;
     --window-background: #36373a33;
     --window-text: #c8d5f4;
 
@@ -98,7 +98,8 @@ body {
     }
 }
 
-.window a {
+.window a,
+.display p {
     display: flex;
     justify-content: center;
     color: var(--input-text);
@@ -139,4 +140,46 @@ body {
         transition: all 0.2s ease-in-out;
         cursor: pointer;
     }
+}
+
+body::before {
+    width: 100%;
+    height: 100%;
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: url(../assets/noise.svg);
+    opacity: 0.1;
+}
+
+body {
+    background: linear-gradient(270deg, #e7ab79, #b25068, #774360, #4c3a51);
+    background-size: 800% 800%;
+
+    -webkit-animation: background 30s ease infinite;
+    -moz-animation: background 30s ease infinite;
+    -o-animation: background 30s ease infinite;
+    animation: background 30s ease infinite;
+}
+
+@-webkit-keyframes background {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@-moz-keyframes background {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@-o-keyframes background {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
+}
+@keyframes background {
+    0%{background-position:0% 50%}
+    50%{background-position:100% 50%}
+    100%{background-position:0% 50%}
 }

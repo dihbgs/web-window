@@ -1,9 +1,12 @@
 import { STATUS } from "../src/interfaces/common/http";
 import chaiHttp from "chai-http";
 import { expect } from "chai";
+import dotenv from "dotenv";
 import chai from "chai";
 
-const server = "http://localhost:8000";
+dotenv.config();
+
+const server = process.env.SERVER_URL;
 
 chai.use(chaiHttp);
 

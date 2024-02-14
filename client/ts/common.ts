@@ -16,6 +16,24 @@ window.onload = () => {
       passive: false,
     });
   });
+
+  const fields = document.querySelectorAll(".display");
+
+  fields.forEach((field) => {
+    field.addEventListener("click", (clickEvent) => {
+      const target = clickEvent.target as HTMLElement;
+      const targetClassList = target.closest(".display")
+        ?.classList as DOMTokenList;
+      const siblingClassList = target.closest(".display")?.nextElementSibling
+        ?.classList as DOMTokenList;
+
+      targetClassList.toggle("hidden");
+      siblingClassList.toggle("hidden");
+
+      targetClassList.toggle("show");
+      siblingClassList.toggle("show");
+    });
+  });
 };
 
 function handleEventStart(event: TouchAndMouseEvent) {

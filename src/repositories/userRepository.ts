@@ -19,16 +19,9 @@ export class UserRepository implements IUserRepository {
   }
 
   async getAll(): Promise<UserDTO[]> {
-    const searchUsers = await usersCollection.find({}).toArray();
+    const allUsers = await usersCollection.find({}).toArray();
 
-    const usersDTO = searchUsers.map(({ _id, username }) => {
-      return {
-        _id,
-        username,
-      };
-    });
-
-    return usersDTO as UserDTO[];
+    return allUsers as UserDTO[];
   }
 
   async updateOne(user: UserUpdate): ResponseDTO {

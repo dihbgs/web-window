@@ -12,5 +12,5 @@ export interface IUserController {
   deleteOne(request: UserRequest): Promise<UserResponse>;
   getOne(request: UserRequest): Promise<UserResponse>;
   deleteAll(): Promise<UserArrayResponse>;
-  getAll(): Promise<UserArrayResponse>;
+  getAll(): Promise<HttpResponse<string>>;
 }

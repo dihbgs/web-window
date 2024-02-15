@@ -1,5 +1,10 @@
 import { ObjectId } from "mongodb";
-import { badRequest, created, ok } from "../interfaces/common/http";
+import {
+  HttpResponse,
+  badRequest,
+  created,
+  ok,
+} from "../interfaces/common/http";
 import {
   IUserController,
   UserArrayResponse,
@@ -9,6 +14,7 @@ import {
 } from "../interfaces/user/controller";
 import { IUserRepository } from "../interfaces/user/repository";
 import { User, UserDTO } from "../models/user";
+import HTML from "../interfaces/common/utils";
 
 export class UserController implements IUserController {
   userRepository: IUserRepository;
@@ -17,10 +23,13 @@ export class UserController implements IUserController {
     this.userRepository = userRepository;
   }
 
-  async getAll(): Promise<UserArrayResponse> {
+  async getAll(): Promise<HttpResponse<string>> {
     try {
       const users = await this.userRepository.getAll();
-      return ok<UserDTO[]>(users);
+
+      const usersHTML = HTML.usersToHtml(...users);
+
+      return ok<string>(usersHTML);
     } catch (error) {
       return badRequest("Internal server error");
     }
